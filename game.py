@@ -1,6 +1,5 @@
 import pygame
 import random
-import string
 from letter import Letter
 from config import *
 from colors import WHITE, BLACK
@@ -28,6 +27,8 @@ class Game:
             self.spawn_timer = 0
 
         self.letters.update()
+        self.check_misses()
+
     def check_misses(self):
         for letter in self.letters:
             if letter.rect.top > SCREEN_HEIGHT:
@@ -42,6 +43,13 @@ class Game:
                 break
         else:
             self.mistakes += 1
+
+    def check_keys(self, app):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                app.running = False
+            if event.type == pygame.KEYDOWN:
+                self.check_for_hits(event.unicode.upper())
 
     def draw(self, screen):
         screen.fill(WHITE)
