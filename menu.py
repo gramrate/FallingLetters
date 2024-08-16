@@ -3,9 +3,12 @@ import pygame
 from config import *
 from colors import WHITE, BLACK, GRAY
 
-
 class Menu:
-    def __init__(self):
+    def __init__(self, app, screen):
+        self.app = app
+        self.screen = screen
+
+
         self.font = pygame.font.Font(None, FONT_SIZE)
 
         # Основной текст меню
@@ -36,44 +39,44 @@ class Menu:
         self.quit_button_text_surface = self.button_font.render("Quit", True, BLACK)
         self.quit_button_text_rect = self.quit_button_text_surface.get_rect(center=self.quit_button_rect.center)
 
-    def check_for_buttons(self, mouse_pos, mouse_click, app=None):
+    def check_for_buttons(self, mouse_pos, mouse_click):
         # Проверка нажатия кнопки "Play Button"
         if self.play_button_rect.collidepoint(mouse_pos) and mouse_click:
             print('Start game')
-            app.is_game = True
-            app.is_menu = False
+            self.app.is_game = True
+            self.app.is_menu = False
 
         # Проверка нажатия кнопки "Difficulty"
         if self.difficulty_button_rect.collidepoint(mouse_pos) and mouse_click:
             print('Open difficulty settings')
-            # app.is_setings = True
-            # app.is_menu = False
+            self.app.is_difficulty = True
+            self.app.is_menu = False
 
         # Проверка нажатия кнопки "Quit"
         if self.quit_button_rect.collidepoint(mouse_pos) and mouse_click:
             print('Quit game')
-            app.running = False
+            self.app.running = False
 
-    def check_keys(self, app):
+    def check_keys(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                app.running = False
+                self.app.running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
-                    app.is_game = True
-                    app.is_menu = False
+                    self.app.is_game = True
+                    self.app.is_menu = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                self.check_for_buttons(mouse_pos, True, app=app)
+                self.check_for_buttons(mouse_pos, True)
 
-    def draw(self, screen):
-        screen.fill(WHITE)
-        screen.blit(self.text_mainmenu_surface, self.text_mainmenu_rect)
+    def draw(self):
+        self.screen.fill(WHITE)
+        self.screen.blit(self.text_mainmenu_surface, self.text_mainmenu_rect)
 
         # Рисуем кнопки используя их поверхности и прямоугольники
-        screen.blit(self.play_button_surface, self.play_button_rect)
-        screen.blit(self.play_button_text_surface, self.play_button_text_rect)
-        screen.blit(self.difficulty_button_surface, self.difficulty_button_rect)
-        screen.blit(self.difficulty_button_text_surface, self.difficulty_button_text_rect)
-        screen.blit(self.quit_button_surface, self.quit_button_rect)
-        screen.blit(self.quit_button_text_surface, self.quit_button_text_rect)
+        self.screen.blit(self.play_button_surface, self.play_button_rect)
+        self.screen.blit(self.play_button_text_surface, self.play_button_text_rect)
+        self.screen.blit(self.difficulty_button_surface, self.difficulty_button_rect)
+        self.screen.blit(self.difficulty_button_text_surface, self.difficulty_button_text_rect)
+        self.screen.blit(self.quit_button_surface, self.quit_button_rect)
+        self.screen.blit(self.quit_button_text_surface, self.quit_button_text_rect)

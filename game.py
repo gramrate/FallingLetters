@@ -6,7 +6,11 @@ from colors import WHITE, BLACK
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, app, screen):
+        self.app = app
+        self.screen = screen
+
+
         self.letters = pygame.sprite.Group()
         self.score = 0
         self.mistakes = 0
@@ -44,19 +48,19 @@ class Game:
         else:
             self.mistakes += 1
 
-    def check_keys(self, app):
+    def check_keys(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                app.running = False
+                self.app.running = False
             if event.type == pygame.KEYDOWN:
                 self.check_for_hits(event.unicode.upper())
 
-    def draw(self, screen):
-        screen.fill(WHITE)
-        self.letters.draw(screen)
-        pygame.draw.line(screen, BLACK, (0, LINE_START), (SCREEN_WIDTH, LINE_START), 2)
-        pygame.draw.line(screen, BLACK, (0, LINE_END), (SCREEN_WIDTH, LINE_END), 2)
+    def draw(self):
+        self.screen.fill(WHITE)
+        self.letters.draw(self.screen)
+        pygame.draw.line(self.screen, BLACK, (0, LINE_START), (SCREEN_WIDTH, LINE_START), 2)
+        pygame.draw.line(self.screen, BLACK, (0, LINE_END), (SCREEN_WIDTH, LINE_END), 2)
         score_text = self.font.render(f"Score: {self.score}", True, BLACK)
-        screen.blit(score_text, (10, 10))
+        self.screen.blit(score_text, (10, 10))
         mistakes = self.font.render(f"Mistakes: {self.mistakes}", True, BLACK)
-        screen.blit(mistakes, (10, 10 + FONT_SIZE))
+        self.screen.blit(mistakes, (10, 10 + FONT_SIZE))
