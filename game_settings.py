@@ -1,8 +1,5 @@
 import json
 
-import colorama
-
-
 class GameSettings:
     def __init__(self):
         with open('data.json', 'r') as file:
@@ -116,4 +113,3 @@ class GameSettings:
         }
         with open('data.json', 'w') as file:
             json.dump(data, file, indent=2)
-colorama.colorama_text

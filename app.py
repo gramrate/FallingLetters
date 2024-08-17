@@ -27,7 +27,6 @@ class App:
 
     def run(self):
         while self.running:
-            print(self.game_settings.difficulty)
             if self.is_game:
                 self.game.check_keys()
                 self.game.update()

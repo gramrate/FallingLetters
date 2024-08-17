@@ -11,37 +11,37 @@ class Game:
         self.app = app
         self.screen = screen
 
-        self.SPAWN_RATE = difficulty_map[app.game_settings.difficulty].spawn_rate
-        self.LINE_END = LINE_START + difficulty_map[app.game_settings.difficulty].target_zone
-        self.FALLING_SPEED = difficulty_map[app.game_settings.difficulty].falling_speed
-        self.HIT_FACTOR = difficulty_map[app.game_settings.difficulty].hit_factor
+        difficulty = difficulty_map[app.game_settings.difficulty]
+        self.LINE_END = LINE_START + difficulty.target_zone
+        self.HIT_FACTOR = difficulty.hit_factor
+        self.MAX_MISTAKE_SERIES = difficulty.max_mistake_series
+        self.spawn_rate = difficulty.spawn_rate
+        self.MIN_SPAWN_RATE = difficulty.min_spawn_rate
+        self.INCREMENT_SPAWN_RATE = difficulty.increment_spawn_rate
+        self.falling_speed = difficulty.falling_speed
+        self.MAX_FALLING_SPEED = difficulty.max_falling_speed
+        self.INCREMENT_FALLING_SPEED = difficulty.increment_falling_speed
+
 
         self.letters = pygame.sprite.Group()
         self.score = 0
         self.mistakes = 0
-        self.spawn_timer = self.SPAWN_RATE - 5
+        self.mistake_series = 0
+        self.spawn_timer = self.spawn_rate - 5
         self.font = pygame.font.Font(None, FONT_SIZE)
 
     def spawn_letter(self):
         x = random.randint(0, SCREEN_WIDTH - FONT_SIZE)
         y = 0
         char = random.choice(LETTERS)
-        new_letter = Letter(x, y, char, self.FALLING_SPEED)
+        new_letter = Letter(x, y, char, self.falling_speed)
         self.letters.add(new_letter)
-
-    def update(self):
-        self.spawn_timer += 1
-        if self.spawn_timer >= self.SPAWN_RATE + random.randint(1, self.SPAWN_RATE):
-            self.spawn_letter()
-            self.spawn_timer = 0
-
-        self.letters.update()
-        self.check_misses()
 
     def check_misses(self):
         for letter in self.letters:
             if letter.rect.top > SCREEN_HEIGHT:
                 self.mistakes += 1
+                self.mistake_series += 1
                 letter.kill()
 
     def check_for_hits(self, key):
@@ -49,9 +49,34 @@ class Game:
             if letter.char == key and LINE_START - FONT_SIZE // 2 <= letter.rect.centery <= self.LINE_END + FONT_SIZE // 2:
                 letter.kill()
                 self.score += 1 * self.HIT_FACTOR
+                self.mistake_series = 0
                 break
         else:
             self.mistakes += 1
+            self.mistake_series += 1
+
+    def check_lose(self):
+        if self.mistake_series >= self.MAX_MISTAKE_SERIES:
+            # self.app.is_defeat = True
+            self.app.is_menu = True
+            self.app.is_game = False
+
+    def difficulty_increment(self):
+        if self.falling_speed <= self.MAX_FALLING_SPEED:
+            self.falling_speed += self.INCREMENT_FALLING_SPEED
+        if self.spawn_rate >= self.MIN_SPAWN_RATE:
+            self.spawn_rate -= self.INCREMENT_SPAWN_RATE
+
+    def update(self):
+        self.spawn_timer += 1
+        if self.spawn_timer >= self.spawn_rate:
+            self.spawn_letter()
+            self.spawn_timer = 0
+
+        self.letters.update()
+        self.difficulty_increment()
+        self.check_misses()
+        self.check_lose()
 
     def check_keys(self):
         for event in pygame.event.get():
