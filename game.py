@@ -1,6 +1,7 @@
 import pygame
 import random
 from letter import Letter
+from defeat_menu import DefeatMenu
 from difficulty import difficulty_map
 from config import *
 from colors import WHITE, BLACK
@@ -30,6 +31,10 @@ class Game:
         self.spawn_timer = self.spawn_rate - 5
         self.font = pygame.font.Font(None, FONT_SIZE)
 
+        # Загрузка фона
+        self.background_image = pygame.image.load("images/main_menu.png").convert()
+        self.background_image = pygame.transform.scale(self.background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
     def spawn_letter(self):
         x = random.randint(0, SCREEN_WIDTH - FONT_SIZE)
         y = 0
@@ -57,8 +62,8 @@ class Game:
 
     def check_lose(self):
         if self.mistake_series >= self.MAX_MISTAKE_SERIES:
-            # self.app.is_defeat = True
-            self.app.is_menu = True
+            self.app.defeat_menu = DefeatMenu(self.app, self.screen)
+            self.app.is_defeat = True
             self.app.is_game = False
 
     def difficulty_increment(self):
@@ -86,7 +91,7 @@ class Game:
                 self.check_for_hits(event.unicode.upper())
 
     def draw(self):
-        self.screen.fill(WHITE)
+        self.screen.blit(self.background_image, (0, 0))  # Отображаем фон
         self.letters.draw(self.screen)
         pygame.draw.line(self.screen, BLACK, (0, LINE_START), (SCREEN_WIDTH, LINE_START), 2)
         pygame.draw.line(self.screen, BLACK, (0, self.LINE_END), (SCREEN_WIDTH, self.LINE_END), 2)

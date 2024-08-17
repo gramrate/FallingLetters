@@ -39,23 +39,25 @@ class Menu:
         self.quit_button_text_surface = self.button_font.render("Quit", True, BLACK)
         self.quit_button_text_rect = self.quit_button_text_surface.get_rect(center=self.quit_button_rect.center)
 
+        # Загрузка фона
+        self.background_image = pygame.image.load("images/main_menu.png").convert()
+        self.background_image = pygame.transform.scale(self.background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+
     def check_for_buttons(self, mouse_pos, mouse_click):
         # Проверка нажатия кнопки "Play Button"
         if self.play_button_rect.collidepoint(mouse_pos) and mouse_click:
-            print('Start game')
             self.app.game = Game(self.app, self.screen)
             self.app.is_game = True
             self.app.is_menu = False
 
         # Проверка нажатия кнопки "Difficulty"
         if self.difficulty_button_rect.collidepoint(mouse_pos) and mouse_click:
-            print('Open difficulty settings')
             self.app.is_difficulty = True
             self.app.is_menu = False
 
         # Проверка нажатия кнопки "Quit"
         if self.quit_button_rect.collidepoint(mouse_pos) and mouse_click:
-            print('Quit game')
             self.app.running = False
 
     def check_keys(self):
@@ -71,7 +73,7 @@ class Menu:
                 self.check_for_buttons(mouse_pos, True)
 
     def draw(self):
-        self.screen.fill(WHITE)
+        self.screen.blit(self.background_image, (0, 0))  # Отображаем фон
         self.screen.blit(self.text_mainmenu_surface, self.text_mainmenu_rect)
 
         # Рисуем кнопки используя их поверхности и прямоугольники

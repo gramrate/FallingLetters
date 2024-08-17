@@ -46,24 +46,24 @@ class DifficultyMenu:
         self.back_button_text_surface = self.button_font.render("Back", True, BLACK)
         self.back_button_text_rect = self.back_button_text_surface.get_rect(center=self.back_button_rect.center)
 
+        # Загрузка фона
+        self.background_image = pygame.image.load("images/main_menu.png").convert()
+        self.background_image = pygame.transform.scale(self.background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
     def check_for_buttons(self, mouse_pos, mouse_click):
         # Проверка нажатия кнопок сложности
         if self.easy_button_rect.collidepoint(mouse_pos) and mouse_click:
-            print('Easy difficulty selected')
             self.app.game_settings.difficulty = 1
 
         if self.medium_button_rect.collidepoint(mouse_pos) and mouse_click:
-            print('Medium difficulty selected')
             self.app.game_settings.difficulty = 2
 
 
         if self.hard_button_rect.collidepoint(mouse_pos) and mouse_click:
-            print('Hard difficulty selected')
             self.app.game_settings.difficulty = 3
 
         # Проверка нажатия кнопки "Назад"
         if self.back_button_rect.collidepoint(mouse_pos) and mouse_click:
-            print('Back to menu')
             self.app.is_menu = True
             self.app.is_difficulty = False
 
@@ -81,7 +81,7 @@ class DifficultyMenu:
 
 
     def draw(self):
-        self.screen.fill(WHITE)
+        self.screen.blit(self.background_image, (0, 0))  # Отображаем фон
         self.screen.blit(self.text_maindifficulty_surface, self.text_maindifficulty_rect)
 
         # Рисуем кнопки используя их поверхности и прямоугольники

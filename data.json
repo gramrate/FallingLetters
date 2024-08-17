@@ -8,7 +8,7 @@
   },
   "game_settings": {
     "game-secret-key": "123",
-    "difficulty": 1
+    "difficulty": 2
   },
   "session": {
     "session-secret-key": "123",
