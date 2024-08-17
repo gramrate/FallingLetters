@@ -1,0 +1,17 @@
+{
+  "player": {
+    "player-secret-key": null,
+    "nickname": "Guest",
+    "last_played": "2024/12/31 23:59",
+    "highscore": 0,
+    "record_set": "2024/12/31 23:59"
+  },
+  "game_settings": {
+    "game-secret-key": "123",
+    "difficulty": 3
+  },
+  "session": {
+    "session-secret-key": "123",
+    "session": false
+  }
+}

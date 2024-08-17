@@ -1,20 +1,16 @@
 import pygame
 
-# Screen settings
+# Screen config
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 CAPTION = "Falling letters"
 FPS = 60
 
-# Game settings
-FALL_SPEED = 1.5
+# Game config
 LINE_START = 470
-HITBOX_LETTERS = 75
-LINE_END = LINE_START + HITBOX_LETTERS
-LETTER_SPAWN_RATE = 30
 LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-LIVES = 3
+# LIVES = 3
 
 
-# UI settings
+# UI config
 FONT_SIZE = 46

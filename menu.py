@@ -1,5 +1,5 @@
 import pygame
-
+from game import Game
 from config import *
 from colors import WHITE, BLACK, GRAY
 
@@ -43,6 +43,7 @@ class Menu:
         # Проверка нажатия кнопки "Play Button"
         if self.play_button_rect.collidepoint(mouse_pos) and mouse_click:
             print('Start game')
+            self.app.game = Game(self.app, self.screen)
             self.app.is_game = True
             self.app.is_menu = False
 
