@@ -12,7 +12,7 @@ class Game:
         self.app = app
         self.screen = screen
 
-        difficulty = difficulty_map[app.game_settings.difficulty]
+        difficulty = difficulty_map[self.app.game_settings.difficulty]
         self.LINE_END = LINE_START + difficulty.target_zone
         self.HIT_FACTOR = difficulty.hit_factor
         self.MAX_MISTAKE_SERIES = difficulty.max_mistake_series
@@ -29,11 +29,30 @@ class Game:
         self.mistakes = 0
         self.mistake_series = 0
         self.spawn_timer = self.spawn_rate - 5
+
         self.font = pygame.font.Font(None, FONT_SIZE)
 
         # Загрузка фона
         self.background_image = pygame.image.load("images/main_menu.png").convert()
         self.background_image = pygame.transform.scale(self.background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+    def reset(self):
+        difficulty = difficulty_map[self.app.game_settings.difficulty]
+        self.LINE_END = LINE_START + difficulty.target_zone
+        self.HIT_FACTOR = difficulty.hit_factor
+        self.MAX_MISTAKE_SERIES = difficulty.max_mistake_series
+        self.spawn_rate = difficulty.spawn_rate
+        self.MIN_SPAWN_RATE = difficulty.min_spawn_rate
+        self.INCREMENT_SPAWN_RATE = difficulty.increment_spawn_rate
+        self.falling_speed = difficulty.falling_speed
+        self.MAX_FALLING_SPEED = difficulty.max_falling_speed
+        self.INCREMENT_FALLING_SPEED = difficulty.increment_falling_speed
+
+        self.letters = pygame.sprite.Group()
+        self.score = 0
+        self.mistakes = 0
+        self.mistake_series = 0
+        self.spawn_timer = self.spawn_rate - 5
 
     def spawn_letter(self):
         x = random.randint(0, SCREEN_WIDTH - FONT_SIZE)

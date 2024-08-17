@@ -47,7 +47,7 @@ class Menu:
     def check_for_buttons(self, mouse_pos, mouse_click):
         # Проверка нажатия кнопки "Play Button"
         if self.play_button_rect.collidepoint(mouse_pos) and mouse_click:
-            self.app.game = Game(self.app, self.screen)
+            self.app.game.reset()
             self.app.is_game = True
             self.app.is_menu = False
 
