@@ -8,13 +8,15 @@ class DefeatMenu:
         self.app = app
         self.screen = screen
 
+        # Загрузка фона
+        self.background_image_day = pygame.image.load("images/backgrounds/main_menu_day.png").convert()
+        self.background_image_day = pygame.transform.scale(self.background_image_day, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.background_image_night = pygame.image.load("images/backgrounds/main_menu_night.png").convert()
+        self.background_image_night = pygame.transform.scale(self.background_image_night, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+
         self.font = pygame.font.Font(None, 100)  # Увеличенный шрифт для надписи "DEFEAT"
         self.score_font = pygame.font.Font(None, 50)  # Шрифт для отображения счета
-        self.button_font = pygame.font.Font(None, 36)  # Шрифт для кнопок
-
-        # Загрузка фона
-        self.background_image = pygame.image.load("images/main_menu.png").convert()
-        self.background_image = pygame.transform.scale(self.background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
         # Надпись "DEFEAT"
         self.defeat_text_surface = self.font.render("DEFEAT", True, RED1)  # Красный текст
@@ -26,22 +28,23 @@ class DefeatMenu:
         self.update_score_surface()
 
         # Кнопка "Retry"
-        self.retry_button_surface = pygame.Surface((180, 50))
-        self.retry_button_surface.fill(GRAY)  # Серый фон для кнопки
-        self.retry_button_rect = self.retry_button_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 120))  # Позиция кнопки "Retry"
-
-        # Текст на кнопке "Retry"
-        self.retry_button_text_surface = self.button_font.render("Retry", True, BLACK)
-        self.retry_button_text_rect = self.retry_button_text_surface.get_rect(center=self.retry_button_rect.center)
+        self.retry_button_texture = {
+            1: pygame.image.load("images/buttons/retry_button_static.png").convert_alpha(),
+            2: pygame.image.load("images/buttons/retry_button_hover.png").convert_alpha()
+        }
+        self.retry_button_status = 1
+        self.retry_button_rect = self.retry_button_texture[self.retry_button_status].get_rect(
+            center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 120))
 
         # Кнопка "Back"
-        self.back_button_surface = pygame.Surface((180, 50))
-        self.back_button_surface.fill(GRAY)  # Серый фон для кнопки
-        self.back_button_rect = self.back_button_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 180))  # Позиция кнопки
+        self.back_button_texture = {
+            1: pygame.image.load("images/buttons/back_button_static.png").convert_alpha(),
+            2: pygame.image.load("images/buttons/back_button_hover.png").convert_alpha()
+        }
+        self.back_button_status = 1
+        self.back_button_rect = self.back_button_texture[self.back_button_status].get_rect(
+            center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 180))
 
-        # Текст на кнопке "Back"
-        self.back_button_text_surface = self.button_font.render("Back", True, BLACK)
-        self.back_button_text_rect = self.back_button_text_surface.get_rect(center=self.back_button_rect.center)
 
         # Текст для рекорда
         self.record_font = pygame.font.Font(None, 40)
@@ -55,13 +58,19 @@ class DefeatMenu:
         self.record_beaten = False  # Флаг для проверки, побит ли рекорд
 
         # Пример старого рекорда, это должно быть заменено на логику загрузки рекорда из файла или базы данных
-        self.old_record = -2  # Замените это значение на ваш реальный рекорд
+        self.highscore = self.app.game_settings.highscore
 
         self.last_blink_time = time.time()
         self.blink_interval = 0.5  # Интервал моргания в секундах
         self.show_record_text = False
-
+        
+        # Сохраняемся
+        if self.final_score > self.highscore:
+            self.app.game_settings.highscore = self.final_score
+        self.app.game_settings.save()
+        
     def check_keys(self):
+        mouse_click = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.app.running = False
@@ -71,19 +80,30 @@ class DefeatMenu:
                         self.app.is_menu = True
                         self.app.is_game = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_pos = pygame.mouse.get_pos()
-                    self.check_for_buttons(mouse_pos, True)
+                    mouse_click = True
+                else:
+                    mouse_click = False
+        mouse_pos = pygame.mouse.get_pos()
+        self.check_for_clicks(mouse_pos, mouse_click)
 
-    def check_for_buttons(self, mouse_pos, mouse_click):
+    def check_for_clicks(self, mouse_pos, mouse_click):
         # Проверка нажатия кнопок
-        if self.retry_button_rect.collidepoint(mouse_pos) and mouse_click:
-            self.app.game.reset()
-            self.app.is_game = True
-            self.app.is_defeat = False
-        elif self.back_button_rect.collidepoint(mouse_pos) and mouse_click:
-            print('Back to menu')
-            self.app.is_menu = True
-            self.app.is_game = False
+        if self.retry_button_rect.collidepoint(mouse_pos):
+            self.retry_button_status = 2
+            if mouse_click:
+                self.app.game.reset()
+                self.app.is_game = True
+                self.app.is_defeat = False
+        else:
+            self.retry_button_status = 1
+
+        if self.back_button_rect.collidepoint(mouse_pos):
+            self.back_button_status = 2
+            if mouse_click:
+                self.app.is_menu = True
+                self.app.is_game = False
+        else:
+            self.back_button_status = 1
 
     def update(self):
         current_time = time.time()
@@ -112,7 +132,7 @@ class DefeatMenu:
                 self.state = "waiting_for_show"
 
                 # Проверяем, побит ли рекорд
-                if self.final_score > self.old_record:
+                if self.final_score > self.highscore:
                     self.record_beaten = True
                     self.record_text_surface = self.record_font.render("New Record!", True, RED1)
                     self.update_record_surface()
@@ -132,7 +152,7 @@ class DefeatMenu:
         self.record_text_rect = self.record_text_surface.get_rect(center=(SCREEN_WIDTH // 2, record_y))
 
     def draw(self):
-        self.screen.blit(self.background_image, (0, 0))  # Отображаем фон
+        self.screen.blit(self.background_image_day, (0, 0))  # Отображаем фон
         self.screen.blit(self.defeat_text_surface, self.defeat_text_rect)
         self.screen.blit(self.score_text_surface, self.score_text_rect)
 
@@ -146,7 +166,5 @@ class DefeatMenu:
                 self.screen.blit(self.record_text_surface, self.record_text_rect)
 
         if self.state == "waiting_for_input":
-            self.screen.blit(self.retry_button_surface, self.retry_button_rect)
-            self.screen.blit(self.retry_button_text_surface, self.retry_button_text_rect)
-            self.screen.blit(self.back_button_surface, self.back_button_rect)
-            self.screen.blit(self.back_button_text_surface, self.back_button_text_rect)
+            self.screen.blit(self.retry_button_texture[self.retry_button_status], self.retry_button_rect)
+            self.screen.blit(self.back_button_texture[self.back_button_status], self.back_button_rect)

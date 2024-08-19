@@ -12,6 +12,13 @@ class Game:
         self.app = app
         self.screen = screen
 
+        # Загрузка фона
+        self.background_image_day = pygame.image.load("images/backgrounds/main_menu_day.png").convert()
+        self.background_image_day = pygame.transform.scale(self.background_image_day, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.background_image_night = pygame.image.load("images/backgrounds/main_menu_night.png").convert()
+        self.background_image_night = pygame.transform.scale(self.background_image_night, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+
         difficulty = difficulty_map[self.app.game_settings.difficulty]
         self.LINE_END = LINE_START + difficulty.target_zone
         self.HIT_FACTOR = difficulty.hit_factor
@@ -32,9 +39,6 @@ class Game:
 
         self.font = pygame.font.Font(None, FONT_SIZE)
 
-        # Загрузка фона
-        self.background_image = pygame.image.load("images/main_menu.png").convert()
-        self.background_image = pygame.transform.scale(self.background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
     def reset(self):
         difficulty = difficulty_map[self.app.game_settings.difficulty]
@@ -110,7 +114,7 @@ class Game:
                 self.check_for_hits(event.unicode.upper())
 
     def draw(self):
-        self.screen.blit(self.background_image, (0, 0))  # Отображаем фон
+        self.screen.blit(self.background_image_day, (0, 0))  # Отображаем фон
         self.letters.draw(self.screen)
         pygame.draw.line(self.screen, BLACK, (0, LINE_START), (SCREEN_WIDTH, LINE_START), 2)
         pygame.draw.line(self.screen, BLACK, (0, self.LINE_END), (SCREEN_WIDTH, self.LINE_END), 2)
