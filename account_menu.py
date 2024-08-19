@@ -1,0 +1,2 @@
+class AccountMenu:
+    pass
