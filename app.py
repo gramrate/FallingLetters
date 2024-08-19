@@ -16,12 +16,11 @@ class App:
         self.difficulty_menu = DifficultyMenu(self, self.screen)
         self.menu = Menu(self, self.screen)
         self.game = Game(self, self.screen)
-        # self.defeat_menu = DefeatMenu(self, self.screen)
 
         self.running = True
         self.is_menu = True
         self.is_difficulty = False
-        self.is_settings = False
+        self.is_settings_menu = False
         self.is_game = False
         self.is_defeat = False
 

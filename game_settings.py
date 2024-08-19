@@ -1,8 +1,10 @@
 import json
+import os
+
 
 class GameSettings:
     def __init__(self):
-        with open('data.json', 'r') as file:
+        with open("data.json", 'r') as file:
             data = json.load(file)
 
         # Инициализация внутренних переменных

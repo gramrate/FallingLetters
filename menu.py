@@ -3,83 +3,114 @@ from game import Game
 from config import *
 from colors import WHITE, BLACK, GRAY
 
+
 class Menu:
     def __init__(self, app, screen):
         self.app = app
         self.screen = screen
 
+        # Загрузка фона
+        self.background_day_image = pygame.image.load("images/backgrounds/main_menu_day.png").convert()
+        self.background_day_image = pygame.transform.scale(self.background_day_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.background_night_image = pygame.image.load("images/backgrounds/main_menu_night.png").convert()
+        self.background_night_image = pygame.transform.scale(self.background_night_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+        # Иконка настроек
+        self.settings_icon_surface = pygame.Surface((60, 60))
+        self.settings_icon_surface.fill(BLACK)
+        self.settings_icon_rect = self.settings_icon_surface.get_rect(center=(
+            SCREEN_WIDTH - 10 - self.settings_icon_surface.get_width() // 2,
+            SCREEN_HEIGHT - 10 - self.settings_icon_surface.get_height() // 2,))
 
         self.font = pygame.font.Font(None, FONT_SIZE)
 
         # Основной текст меню
         self.text_mainmenu_surface = self.font.render("Main menu", True, BLACK)
-        self.text_mainmenu_rect = self.text_mainmenu_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 100))
+        self.text_mainmenu_rect = self.text_mainmenu_surface.get_rect(
+            center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 100))
 
-        # Размер и позиция кнопки "Play Button"
-        self.play_button_surface = pygame.Surface((180, 50))
-        self.play_button_surface.fill(GRAY)
-        self.play_button_rect = self.play_button_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
-
-        # Создание кнопки "Play Button" как Surface
-        self.button_font = pygame.font.Font(None, 36)
-        self.play_button_text_surface = self.button_font.render("Play", True, BLACK)
-        self.play_button_text_rect = self.play_button_text_surface.get_rect(center=self.play_button_rect.center)
+        # кнопка "Play"
+        self.play_button_texture = {
+            1: pygame.image.load("images/buttons/play_button_static.png").convert_alpha(),
+            2: pygame.image.load("images/buttons/play_button_hover.png").convert_alpha()
+        }
+        self.play_button_status = 1
+        self.play_button_rect = self.play_button_texture[self.play_button_status].get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 
         # Создание кнопки "Difficulty" как Surface
-        self.difficulty_button_surface = pygame.Surface((180, 50))
-        self.difficulty_button_surface.fill(GRAY)
-        self.difficulty_button_rect = self.difficulty_button_surface.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 70))
-        self.difficulty_button_text_surface = self.button_font.render("Difficulty", True, BLACK)
-        self.difficulty_button_text_rect = self.difficulty_button_text_surface.get_rect(center=self.difficulty_button_rect.center)
+        self.difficulty_button_texture = {
+            1: pygame.image.load("images/buttons/difficulty_button_static.png").convert_alpha(),
+            2: pygame.image.load("images/buttons/difficulty_button_hover.png").convert_alpha()
+        }
+        self.difficulty_button_status = 1
+        self.difficulty_button_rect = self.difficulty_button_texture[self.difficulty_button_status].get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 70))
+        
+        
 
         # Создание кнопки "Quit" как Surface
-        self.quit_button_surface = pygame.Surface((180, 50))
-        self.quit_button_surface.fill(GRAY)
-        self.quit_button_rect = self.quit_button_surface.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 140))
-        self.quit_button_text_surface = self.button_font.render("Quit", True, BLACK)
-        self.quit_button_text_rect = self.quit_button_text_surface.get_rect(center=self.quit_button_rect.center)
+        self.quit_button_texture = {
+            1: pygame.image.load("images/buttons/quit_button_static.png").convert_alpha(),
+            2: pygame.image.load("images/buttons/quit_button_hover.png").convert_alpha()
+        }
+        self.quit_button_status = 1
+        self.quit_button_rect = self.quit_button_texture[self.quit_button_status].get_rect(
+            center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 140))
 
-        # Загрузка фона
-        self.background_image = pygame.image.load("images/main_menu.png").convert()
-        self.background_image = pygame.transform.scale(self.background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
-
-
-    def check_for_buttons(self, mouse_pos, mouse_click):
-        # Проверка нажатия кнопки "Play Button"
-        if self.play_button_rect.collidepoint(mouse_pos) and mouse_click:
-            self.app.game.reset()
-            self.app.is_game = True
-            self.app.is_menu = False
+    def check_for_clicks(self, mouse_pos, mouse_click):
+        if self.play_button_rect.collidepoint(mouse_pos):
+            self.play_button_status = 2
+            if mouse_click:
+                self.app.game.reset()
+                self.app.is_game = True
+                self.app.is_menu = False
+        else:
+            self.play_button_status = 1
 
         # Проверка нажатия кнопки "Difficulty"
-        if self.difficulty_button_rect.collidepoint(mouse_pos) and mouse_click:
-            self.app.is_difficulty = True
-            self.app.is_menu = False
+        if self.difficulty_button_rect.collidepoint(mouse_pos):
+            self.difficulty_button_status = 2
+            if mouse_click:
+                self.app.is_difficulty = True
+                self.app.is_menu = False
+
+        else:
+            self.difficulty_button_status = 1
 
         # Проверка нажатия кнопки "Quit"
-        if self.quit_button_rect.collidepoint(mouse_pos) and mouse_click:
-            self.app.running = False
+        if self.quit_button_rect.collidepoint(mouse_pos):
+            self.quit_button_status = 2
+            if mouse_click:
+                self.app.running = False
+        else:
+            self.quit_button_status = 1
+
+        if self.settings_icon_rect.collidepoint(mouse_pos):
+            if mouse_click:
+                print(f"Icon clicked!")  # Реализуйте здесь вашу логику отклика
 
     def check_keys(self):
+        mouse_click = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.app.running = False
-            if event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     self.app.is_game = True
                     self.app.is_menu = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = pygame.mouse.get_pos()
-                self.check_for_buttons(mouse_pos, True)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_click = True
+            else:
+                mouse_click = False
+        mouse_pos = pygame.mouse.get_pos()
+        self.check_for_clicks(mouse_pos, mouse_click)
 
     def draw(self):
-        self.screen.blit(self.background_image, (0, 0))  # Отображаем фон
+        self.screen.blit(self.background_day_image, (0, 0))  # Отображаем фон
+        self.screen.blit(self.settings_icon_surface, self.settings_icon_rect)
+
         self.screen.blit(self.text_mainmenu_surface, self.text_mainmenu_rect)
 
         # Рисуем кнопки используя их поверхности и прямоугольники
-        self.screen.blit(self.play_button_surface, self.play_button_rect)
-        self.screen.blit(self.play_button_text_surface, self.play_button_text_rect)
-        self.screen.blit(self.difficulty_button_surface, self.difficulty_button_rect)
-        self.screen.blit(self.difficulty_button_text_surface, self.difficulty_button_text_rect)
-        self.screen.blit(self.quit_button_surface, self.quit_button_rect)
-        self.screen.blit(self.quit_button_text_surface, self.quit_button_text_rect)
+        self.screen.blit(self.play_button_texture[self.play_button_status], self.play_button_rect)
+        self.screen.blit(self.difficulty_button_texture[self.difficulty_button_status], self.difficulty_button_rect)
+        self.screen.blit(self.quit_button_texture[self.quit_button_status], self.quit_button_rect)
