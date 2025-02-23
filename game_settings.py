@@ -8,7 +8,7 @@ class GameSettings:
             data = json.load(file)
 
         # Инициализация внутренних переменных
-        self._player_secret_key = data.get("player-secret-key")
+        self._player_secret_key = data["player"].get("player-secret-key")
         self._nickname = data["player"].get("nickname")
         self._last_played = data["player"].get("last_played")
         self._highscore = data["player"].get("highscore")

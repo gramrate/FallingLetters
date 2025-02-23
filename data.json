@@ -1,6 +1,6 @@
 {
   "player": {
-    "player-secret-key": null,
+    "player-secret-key": "123",
     "nickname": "Guest",
     "last_played": "2024/12/31 23:59",
     "highscore": 204,
